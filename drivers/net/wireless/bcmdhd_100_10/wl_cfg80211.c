@@ -442,8 +442,6 @@ static int wl_cfg80211_recv_nbr_resp(struct net_device *dev, uint8 *body, uint b
 #define RADIO_PWRSAVE_LEVEL_MAX				5
 #define RADIO_PWRSAVE_PPS_MIN					1
 #define RADIO_PWRSAVE_QUIETTIME_MIN			1
-#define RADIO_PWRSAVE_ASSOCCHECK_MIN		0
-#define RADIO_PWRSAVE_ASSOCCHECK_MAX		1
 
 #define RADIO_PWRSAVE_MAJOR_VER 1
 #define RADIO_PWRSAVE_MINOR_VER 1
@@ -4134,9 +4132,12 @@ wl_cfg80211_ibss_vsie_delete(struct net_device *dev)
 			ret = BCME_ERROR;
 			goto end;
 		}
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
 		/* change the command from "add" to "del" */
 		strncpy(cfg->ibss_vsie->cmd, "del", VNDR_IE_CMD_LEN - 1);
 		cfg->ibss_vsie->cmd[VNDR_IE_CMD_LEN - 1] = '\0';
+#pragma GCC diagnostic pop
 
 		ret = wldev_iovar_setbuf_bsscfg(dev, "vndr_ie",
 				cfg->ibss_vsie, cfg->ibss_vsie_len,
@@ -4593,9 +4594,6 @@ static s32
 wl_role_to_cfg80211_type(uint16 role, uint16 *wl_iftype, uint16 *mode)
 {
 	switch (role) {
-		*wl_iftype = WL_IF_TYPE_AWDL;
-		*mode = WL_MODE_AWDL;
-		return NL80211_IFTYPE_STATION;
 	case WLC_E_IF_ROLE_STA:
 		*wl_iftype = WL_IF_TYPE_STA;
 		*mode = WL_MODE_BSS;
@@ -23381,10 +23379,6 @@ wl_update_ap_rps_params(struct net_device *dev, ap_rps_info_t* rps, char *ifname
 		return BCME_BADARG;
 
 	if (rps->quiet_time < RADIO_PWRSAVE_QUIETTIME_MIN)
-		return BCME_BADARG;
-
-	if (rps->sta_assoc_check > RADIO_PWRSAVE_ASSOCCHECK_MAX ||
-		rps->sta_assoc_check < RADIO_PWRSAVE_ASSOCCHECK_MIN)
 		return BCME_BADARG;
 
 	cfg->ap_rps_info.pps = rps->pps;

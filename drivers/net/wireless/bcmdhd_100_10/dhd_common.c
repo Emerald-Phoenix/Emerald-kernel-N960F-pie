@@ -1383,7 +1383,7 @@ dhd_doiovar(dhd_pub_t *dhd_pub, const bcm_iovar_t *vi, uint32 actionid, const ch
 		dhd_ver_len = strlen(dhd_version);
 		bus_api_rev_len = strlen(bus_api_revision);
 		if (dhd_ver_len)
-			bcm_strncpy_s((char*)arg, dhd_ver_len, dhd_version, dhd_ver_len);
+			bcm_strncpy_s((char*)arg, dhd_ver_len, dhd_version, len - 1);
 		if (bus_api_rev_len)
 			bcm_strncat_s((char*)arg + dhd_ver_len, bus_api_rev_len, bus_api_revision,
 				bus_api_rev_len);
@@ -3546,7 +3546,7 @@ dhd_pktfilter_offload_set(dhd_pub_t * dhd, char *arg)
 
 	str = "pkt_filter_add";
 	str_len = strlen(str);
-	bcm_strncpy_s(buf, MAX_PKTFLT_BUF_SIZE, str, str_len);
+	bcm_strncpy_s(buf, MAX_PKTFLT_BUF_SIZE, str, MAX_PKTFLT_BUF_SIZE - 1);
 	buf[ str_len ] = '\0';
 	buf_len = str_len + 1;
 
@@ -3700,7 +3700,7 @@ dhd_pktfilter_offload_set(dhd_pub_t * dhd, char *arg)
 					htod16(WL_PKT_FILTER_MFLAG_NEG);
 				(argv[i])++;
 			}
-			if (argv[i] == '\0') {
+			if (*argv[i] == '\0') {
 				printf("Pattern not provided\n");
 				goto fail;
 			}

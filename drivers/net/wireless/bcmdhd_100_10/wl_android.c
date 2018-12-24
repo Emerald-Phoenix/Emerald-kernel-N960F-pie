@@ -4558,8 +4558,11 @@ int wl_android_set_ibss_beacon_ouidata(struct net_device *dev, char *command, in
 		return -ENOMEM;
 	}
 	/* Copy the vndr_ie SET command ("add"/"del") to the buffer */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
 	strncpy(vndr_ie->cmd, "add", VNDR_IE_CMD_LEN - 1);
 	vndr_ie->cmd[VNDR_IE_CMD_LEN - 1] = '\0';
+#pragma GCC diagnostic pop
 
 	/* Set the IE count - the buffer contains only 1 IE */
 	iecount = htod32(1);
