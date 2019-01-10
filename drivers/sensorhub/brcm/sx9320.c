@@ -1342,7 +1342,7 @@ static irqreturn_t sx9320_interrupt_thread(int irq, void *pdata)
 	if (sx9320_get_nirq_state(data) == 1) {
 		pr_err("[SX9320]: %s - nirq read high\n", __func__);
 	} else {
-		wake_lock_timeout(&data->grip_wake_lock, 3 * HZ);
+		wake_lock_timeout(&data->grip_wake_lock, 1 * HZ);
 		schedule_delayed_work(&data->irq_work, msecs_to_jiffies(100));
 	}
 
