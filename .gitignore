@@ -1,0 +1,14 @@
+.config*
+.version
+Module.symvers
+*.a
+*.d
+*.o
+*.o.*
+*.s
+*.cmd
+.tmp*
+modules.order
+modules.builtin
+System.map
+vmlinux

@@ -1,2 +1,7 @@
 i386
 x86_64
+arm64/boot/dtb.img
+arm64/boot/dts/exynos/*.dtb
+arm64/boot/dts/exynos/*.dtb.*
+arm64/kernel/vdso/vdso.so*
+arm64/include/generated
