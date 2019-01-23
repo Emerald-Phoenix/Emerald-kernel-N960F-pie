@@ -270,7 +270,7 @@
 
 		/* cycle, chg_float_voltage, recharge_condition_vcell, full_condition_vcell, full_condition_soc */
 		battery,age_data = <0 4350 4280 4250 93
-				300 4330 4260 4230 92
+				20 4330 4260 4230 92
 				400 4310 4240 4210 91
 				700 4290 4220 4190 90
 				1000 4240 4170 4140 89>;
