@@ -673,7 +673,7 @@ static void get_param_from_app_snapshot(int param,
 
 	switch (param) {
 	case APP_PARAM_NAME:
-		strlcpy(value->str_val, app_params->name, MAX_CHAR_BUF_SIZE);
+		strlcpy(value->str_val, app_params->name, TASK_COMM_LEN);
 		break;
 	case APP_PARAM_TGID:
 		value->int_val = app_params->tgid;

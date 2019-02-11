@@ -49,7 +49,7 @@ void set_cpufreq_policy_map(void)
 	unsigned int cpu = 0;
 	struct cpufreq_policy policy;
 
-	memset(cpufreq_policy_map, 0, MAX_NUM_CPUS);
+	memset(cpufreq_policy_map, 0, MAX_NUM_CPUS*sizeof(int));
 	for_each_possible_cpu(cpu) {
 		if (cpufreq_get_policy(&policy, cpu) != 0) {
 #ifdef CONFIG_MPSD_DEBUG
@@ -96,7 +96,7 @@ void memset_app_params(struct app_params_struct *data)
 	}
 
 	memset(data, 0, sizeof(struct app_params_struct));
-	strlcpy(data->name, DEFAULT_PARAM_VAL_STR, MAX_CHAR_BUF_SIZE);
+	strlcpy(data->name, DEFAULT_PARAM_VAL_STR, TASK_COMM_LEN);
 	data->tgid = DEFAULT_PARAM_VAL_INT;
 	data->flags = DEFAULT_PARAM_VAL_INT;
 	data->priority = DEFAULT_PARAM_VAL_INT;
