@@ -526,7 +526,7 @@
 		};
 		current_group_12 {
 			cable_number = <1 4>;
-			input_current = <475>;
+			input_current = <500>;
 			charging_current = <550>;
 		};
 	};
