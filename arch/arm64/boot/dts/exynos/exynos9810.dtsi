@@ -783,8 +783,8 @@
 		governor = "interactive";
 		interactive_info = <338000 94 0>;
 		gpu_dvfs_table_size = <6 7>; /*<row col>*/
-		gpu_dvfs_table = <  572000    78  100   5  1794000  1950000      0
-		                    546000    78   99   1  1794000  1950000      0
+		gpu_dvfs_table = <  572000    90  100   5  1794000  1794000      0
+		                    546000    78   95   1  1794000  1794000      0
 		                    455000    78   85   1  1539000  1794000      0
 		                    338000    78   85   1  1352000  1248000      0
 		                    299000    78   85   1  1014000        0      0
@@ -4987,7 +4987,7 @@
 			device_type = "freqvar-tune";
 			shared-cpus = "0-3";
 
-			boost_table = < 100 598000 60 715000 30 832000 20 949000 10 1053000 0 >;
+			boost_table = < 80 598000 60 715000 30 832000 20 949000 10 1053000 0 >;
 			up_rate_limit_table = < 5 >;
 			down_rate_limit_table = < 5 >;
 			upscale_ratio_table = < 80 1456000 85 >;
@@ -4996,10 +4996,10 @@
 			device_type = "freqvar-tune";
 			shared-cpus = "4-7";
 
-			boost_table = < 20 858000 15 962000 5 1261000 0 >;
+			boost_table = < 15 858000 10 962000 5 1261000 0 >;
 			up_rate_limit_table = < 5 >;
 			down_rate_limit_table = < 5 >;
-			upscale_ratio_table = < 65 962000 75 1469000 85 2314000 90 >;
+			upscale_ratio_table = < 65 962000 75 1469000 80 1794000 85 2314000 90 >;
 		};
 	};
 
