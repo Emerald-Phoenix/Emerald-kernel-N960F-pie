@@ -4988,8 +4988,8 @@
 			shared-cpus = "0-3";
 
 			boost_table = < 80 598000 60 715000 30 832000 20 949000 10 1053000 0 >;
-			up_rate_limit_table = < 5 >;
-			down_rate_limit_table = < 5 >;
+			up_rate_limit_table = < 4 >;
+			down_rate_limit_table = < 4 >;
 			upscale_ratio_table = < 80 1456000 85 >;
 		};
 		domain@1 {
@@ -4997,8 +4997,8 @@
 			shared-cpus = "4-7";
 
 			boost_table = < 15 858000 10 962000 5 1261000 0 >;
-			up_rate_limit_table = < 5 >;
-			down_rate_limit_table = < 5 >;
+			up_rate_limit_table = < 4 >;
+			down_rate_limit_table = < 4 >;
 			upscale_ratio_table = < 65 962000 75 1469000 80 1794000 85 2314000 90 >;
 		};
 	};
