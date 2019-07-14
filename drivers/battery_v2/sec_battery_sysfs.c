@@ -29,6 +29,7 @@ static struct device_attribute sec_battery_attrs[] = {
 	SEC_BATTERY_ATTR(batt_vol_adc_cal),
 	SEC_BATTERY_ATTR(batt_vol_aver),
 	SEC_BATTERY_ATTR(batt_vol_adc_aver),
+	SEC_BATTERY_ATTR(batt_voltage_now),
 	SEC_BATTERY_ATTR(batt_current_ua_now),
 	SEC_BATTERY_ATTR(batt_current_ua_avg),
 	SEC_BATTERY_ATTR(batt_filter_cfg),
@@ -174,6 +175,7 @@ static struct device_attribute sec_battery_attrs[] = {
 	SEC_BATTERY_ATTR(batt_current_event),
 	SEC_BATTERY_ATTR(cc_info),
 	SEC_BATTERY_ATTR(batt_jig_gpio),
+	SEC_BATTERY_ATTR(ext_event),
 };
 
 
@@ -234,7 +236,15 @@ ssize_t sec_bat_show_attrs(struct device *dev,
 		break;
 	case BATT_VOL_ADC_AVER:
 		break;
-
+	case BATT_VOLTAGE_NOW:
+		{
+			value.intval = 0;
+			psy_do_property(battery->pdata->fuelgauge_name, get,
+				POWER_SUPPLY_PROP_VOLTAGE_NOW, value);
+			i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n",
+			        value.intval * 1000);
+		}
+		break;
 	case BATT_CURRENT_UA_NOW:
 		{
 			value.intval = SEC_BATTERY_CURRENT_UA;
@@ -396,7 +406,7 @@ ssize_t sec_bat_show_attrs(struct device *dev,
 		break;
 	case SIOP_EVENT:
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n",
-			battery->siop_event);
+			0);
 		break;
 	case BATT_CHARGING_SOURCE:
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n",
@@ -1146,6 +1156,8 @@ ssize_t sec_bat_show_attrs(struct device *dev,
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n",
 			value.intval);
 		break;
+	case EXT_EVENT:
+		break;
 	default:
 		i = -EINVAL;
 		break;
@@ -1203,6 +1215,8 @@ ssize_t sec_bat_store_attrs(
 	case BATT_VOL_AVER:
 		break;
 	case BATT_VOL_ADC_AVER:
+		break;
+	case BATT_VOLTAGE_NOW:
 		break;
 	case BATT_CURRENT_UA_NOW:
 		break;
@@ -1294,14 +1308,6 @@ ssize_t sec_bat_store_attrs(
 				battery->siop_level = 100;
 			}
 
-			if (battery->siop_event == SIOP_EVENT_WPC_CALL_START ||
-				battery->siop_event == SIOP_EVENT_WPC_CALL_END)
-				return count;
-
-			if (delayed_work_pending(&battery->siop_event_work))
-				return count;
-
-			cancel_delayed_work(&battery->siop_work);
 			wake_lock(&battery->siop_level_wake_lock);
 			queue_delayed_work(battery->monitor_wqueue, &battery->siop_level_work, 0);
 
@@ -1310,29 +1316,6 @@ ssize_t sec_bat_store_attrs(
 		break;
 	case SIOP_EVENT:
 		if (sscanf(buf, "%10d\n", &x) == 1) {
-			if (battery->pdata->siop_event_check_type & SIOP_EVENT_WPC_CALL) { // To reduce call noise with battery pack
-				if (x == SIOP_EVENT_WPC_CALL_START) {
-					battery->siop_event |= SIOP_EVENT_WPC_CALL;
-					pr_info("%s : WPC Enable & SIOP EVENT CALL START. 0x%x\n",
-						__func__, battery->siop_event);
-					cancel_delayed_work(&battery->siop_level_work);
-					cancel_delayed_work(&battery->siop_work);
-					wake_lock(&battery->siop_event_wake_lock);
-					queue_delayed_work(battery->monitor_wqueue, &battery->siop_event_work, 0);
-				} else if (x == SIOP_EVENT_WPC_CALL_END) {
-					battery->siop_event &= ~SIOP_EVENT_WPC_CALL;
-					pr_info("%s : WPC Enable & SIOP EVENT CALL END. 0x%x\n",
-						__func__, battery->siop_event);
-					cancel_delayed_work(&battery->siop_level_work);
-					cancel_delayed_work(&battery->siop_work);
-					wake_lock(&battery->siop_event_wake_lock);
-					queue_delayed_work(battery->monitor_wqueue, &battery->siop_event_work,
-							msecs_to_jiffies(5000));
-				} else {
-					battery->siop_event &= ~SIOP_EVENT_WPC_CALL;
-					pr_info("%s : WPC Disable & SIOP EVENT 0x%x\n", __func__, battery->siop_event);
-				}
-			}
 			ret = count;
 		}
 		break;
@@ -2402,7 +2385,17 @@ ssize_t sec_bat_store_attrs(
 	case CC_INFO:
 		break;
 	case BATT_JIG_GPIO:
-		break;		
+		break;
+	case EXT_EVENT:
+		if (sscanf(buf, "%10d\n", &x) == 1) {
+			dev_info(battery->dev,
+				"%s: ext event 0x%x \n", __func__, x);
+			battery->ext_event = x;
+			wake_lock(&battery->ext_event_wake_lock);
+			queue_delayed_work(battery->monitor_wqueue, &battery->ext_event_work, 0);
+			ret = count;
+		}
+		break;
 	default:
 		ret = -EINVAL;
 		break;
