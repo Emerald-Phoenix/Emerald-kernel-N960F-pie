@@ -17,3 +17,5 @@ insert-sys-cert
 rkp_cfp/common.pyc
 rkp_cfp/tmp
 dtbtool_exynos
+crypto/__pycache__/
+fmp/__pycache__/
